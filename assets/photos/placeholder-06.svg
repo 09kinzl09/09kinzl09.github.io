@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="照片占位 06">
+  <defs>
+    <linearGradient id="g6" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#39211f"/>
+      <stop offset="1" stop-color="#171110"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#g6)"/>
+  <path d="M400 570C300 500 230 440 230 370a85 85 0 0 1 170-50 85 85 0 0 1 170 50c0 70-70 130-170 200z" fill="none" stroke="#d9a8a8" stroke-opacity=".42" stroke-width="6"/>
+  <text x="400" y="648" fill="#c4aeae" font-family="sans-serif" font-size="34" text-anchor="middle">照片占位 06</text>
+</svg>
