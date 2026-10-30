@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 620" width="800" height="620" role="img" aria-label="一起旅行，待续中">
+  <defs>
+    <radialGradient id="softGlow" cx="50%" cy="45%" r="52%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <ellipse cx="400" cy="290" rx="320" ry="230" fill="url(#softGlow)"/>
+
+  <!-- 地面 -->
+  <path d="M150 476 Q400 462 655 476" fill="none" stroke="#a9cfb6" stroke-width="6" stroke-linecap="round"/>
+  <g stroke="#86bd9c" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M196 474 q3 -19 11 -27"/>
+    <path d="M214 474 q-5 -17 -13 -25"/>
+    <path d="M586 474 q-3 -19 -11 -27"/>
+    <path d="M604 474 q5 -17 13 -25"/>
+  </g>
+
+  <!-- 小野花 -->
+  <g>
+    <circle cx="252" cy="454" r="6" fill="#ffb7cd"/>
+    <circle cx="244" cy="461" r="6" fill="#ffb7cd"/>
+    <circle cx="260" cy="461" r="6" fill="#ffb7cd"/>
+    <circle cx="252" cy="461" r="4" fill="#ffd166"/>
+  </g>
+  <g>
+    <circle cx="556" cy="454" r="6" fill="#a9c8ff"/>
+    <circle cx="548" cy="461" r="6" fill="#a9c8ff"/>
+    <circle cx="564" cy="461" r="6" fill="#a9c8ff"/>
+    <circle cx="556" cy="461" r="4" fill="#fff2c9"/>
+  </g>
+
+  <!-- 男孩 -->
+  <g>
+    <path d="M352 322 Q392 338 396 358" fill="none" stroke="#6b5a4e" stroke-width="11" stroke-linecap="round"/>
+    <path d="M352 322 Q392 338 396 358" fill="none" stroke="#fbe0c3" stroke-width="6" stroke-linecap="round"/>
+    <path d="M300 318 Q268 330 262 352" fill="none" stroke="#6b5a4e" stroke-width="11" stroke-linecap="round"/>
+    <path d="M300 318 Q268 330 262 352" fill="none" stroke="#fbe0c3" stroke-width="6" stroke-linecap="round"/>
+
+    <path d="M304 300 Q332 288 360 300 L356 396 Q332 404 308 396 Z" fill="#8ec9f5" stroke="#6b5a4e" stroke-width="5" stroke-linejoin="round"/>
+
+    <path d="M312 398 L308 468" fill="none" stroke="#6b5a4e" stroke-width="12" stroke-linecap="round"/>
+    <path d="M312 398 L308 468" fill="none" stroke="#fbe0c3" stroke-width="7" stroke-linecap="round"/>
+    <path d="M348 398 L352 468" fill="none" stroke="#6b5a4e" stroke-width="12" stroke-linecap="round"/>
+    <path d="M348 398 L352 468" fill="none" stroke="#fbe0c3" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="305" cy="474" rx="16" ry="9" fill="#7d6552"/>
+    <ellipse cx="355" cy="474" rx="16" ry="9" fill="#7d6552"/>
+
+    <circle cx="332" cy="250" r="45" fill="#fbe0c3" stroke="#6b5a4e" stroke-width="5"/>
+    <path d="M287 242 q12 -48 45 -48 q33 0 45 48 q-23 -20 -45 -20 q-22 0 -45 20 z" fill="#5b4436"/>
+    <circle cx="317" cy="252" r="4.6" fill="#4b3b31"/>
+    <circle cx="347" cy="252" r="4.6" fill="#4b3b31"/>
+    <ellipse cx="306" cy="267" rx="8" ry="5" fill="#ffb3b3" opacity="0.75"/>
+    <ellipse cx="358" cy="267" rx="8" ry="5" fill="#ffb3b3" opacity="0.75"/>
+    <path d="M320 271 q12 13 24 0" fill="none" stroke="#6b5a4e" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- 女孩 -->
+  <g>
+    <!-- 后发（先画，被身体和手臂压住） -->
+    <path d="M438 288 q-18 52 -10 108 q12 6 24 0 q-8 -54 2 -104 z" fill="#5b4436"/>
+    <path d="M514 288 q18 52 10 108 q-12 6 -24 0 q8 -54 -2 -104 z" fill="#5b4436"/>
+
+    <path d="M448 322 Q408 338 404 358" fill="none" stroke="#6b5a4e" stroke-width="11" stroke-linecap="round"/>
+    <path d="M448 322 Q408 338 404 358" fill="none" stroke="#fbe0c3" stroke-width="6" stroke-linecap="round"/>
+    <path d="M500 318 Q532 330 538 352" fill="none" stroke="#6b5a4e" stroke-width="11" stroke-linecap="round"/>
+    <path d="M500 318 Q532 330 538 352" fill="none" stroke="#fbe0c3" stroke-width="6" stroke-linecap="round"/>
+
+    <path d="M452 300 Q476 296 500 300 L516 404 Q476 414 436 404 Z" fill="#ffb7cd" stroke="#6b5a4e" stroke-width="5" stroke-linejoin="round"/>
+
+    <path d="M462 404 L458 468" fill="none" stroke="#6b5a4e" stroke-width="12" stroke-linecap="round"/>
+    <path d="M462 404 L458 468" fill="none" stroke="#fbe0c3" stroke-width="7" stroke-linecap="round"/>
+    <path d="M490 404 L494 468" fill="none" stroke="#6b5a4e" stroke-width="12" stroke-linecap="round"/>
+    <path d="M490 404 L494 468" fill="none" stroke="#fbe0c3" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="455" cy="474" rx="16" ry="9" fill="#7d6552"/>
+    <ellipse cx="497" cy="474" rx="16" ry="9" fill="#7d6552"/>
+
+    <circle cx="476" cy="250" r="45" fill="#fbe0c3" stroke="#6b5a4e" stroke-width="5"/>
+    <path d="M431 244 q10 -50 45 -50 q35 0 45 50 q-20 -22 -45 -22 q-25 0 -45 22 z" fill="#5b4436"/>
+    <path d="M428 236 q-6 26 4 40 q8 -8 6 -30 z" fill="#5b4436"/>
+    <path d="M524 236 q6 26 -4 40 q-8 -8 -6 -30 z" fill="#5b4436"/>
+    <circle cx="461" cy="252" r="4.6" fill="#4b3b31"/>
+    <circle cx="491" cy="252" r="4.6" fill="#4b3b31"/>
+    <ellipse cx="450" cy="267" rx="8" ry="5" fill="#ffb3b3" opacity="0.75"/>
+    <ellipse cx="502" cy="267" rx="8" ry="5" fill="#ffb3b3" opacity="0.75"/>
+    <path d="M464 271 q12 13 24 0" fill="none" stroke="#6b5a4e" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- 牵在一起的手 -->
+  <circle cx="400" cy="362" r="15" fill="#fbe0c3" stroke="#6b5a4e" stroke-width="5"/>
+  <path d="M392 358 q8 -6 16 0" fill="none" stroke="#c9a98a" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- 飘着的小心心 -->
+  <g fill="#ff9ec4" opacity="0.85">
+    <path d="M400 176 c-10 -12 -28 -6 -28 8 c0 12 18 20 28 30 c10 -10 28 -18 28 -30 c0 -14 -18 -20 -28 -8 z"/>
+    <path d="M352 140 c-6 -7 -17 -4 -17 5 c0 7 11 12 17 18 c6 -6 17 -11 17 -18 c0 -9 -11 -12 -17 -5 z" opacity="0.6"/>
+    <path d="M460 150 c-5 -6 -14 -3 -14 4 c0 6 9 10 14 15 c5 -5 14 -9 14 -15 c0 -7 -9 -10 -14 -4 z" opacity="0.55"/>
+  </g>
+
+  <!-- 待续中 -->
+  <text x="400" y="556" text-anchor="middle" fill="#6b5a4e"
+        font-family="KaiTi, STKaiti, 'Songti SC', 'Noto Serif SC', serif"
+        font-size="56" letter-spacing="12">待续中</text>
+  <path d="M300 578 Q400 590 500 578" fill="none" stroke="#ffd166" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+</svg>
