@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>内容编辑器 — 我们的宇宙</title>
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="assets/heart.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #0e0c0c;
+    --card: #151112;
+    --ink: #f2ece9;
+    --dim: #a89c98;
+    --rose: #e58b9c;
+    --line: rgba(242, 236, 233, 0.14);
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    --mono: ui-monospace, Consolas, "Courier New", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px;
+    background: rgba(14, 12, 12, 0.94);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bar__left { display: flex; flex-direction: column; }
+  .bar__left strong { letter-spacing: 0.06em; }
+  .bar__right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  main {
+    width: min(980px, calc(100% - 32px));
+    margin: 24px auto 60px;
+    display: grid;
+    gap: 18px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px 24px;
+  }
+
+  .card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .card__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  h2 {
+    margin: 0 0 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  h2 .dim { font-weight: 400; font-size: 0.85rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field > span { font-size: 0.8rem; color: var(--dim); letter-spacing: 0.04em; }
+
+  input[type="text"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #0f0c0d;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.92rem;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus { outline: none; border-color: var(--rose); }
+
+  textarea { resize: vertical; line-height: 1.8; }
+
+  .hint { margin: 0 0 12px; color: var(--dim); font-size: 0.82rem; }
+
+  .rows { display: grid; gap: 10px; }
+
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #100d0e;
+  }
+
+  .row--stack { display: block; }
+
+  .row__head { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .row__head input:first-child { max-width: 130px; }
+  .row__head .btn { margin-left: auto; }
+
+  .row__body { flex: 1; display: grid; gap: 6px; min-width: 0; }
+  .row__tools { display: flex; gap: 6px; }
+
+  .thumb {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #241a1d;
+    display: grid;
+    place-items: center;
+    font-size: 0.72rem;
+    color: var(--dim);
+  }
+
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.84rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s, background 0.2s;
+    text-decoration: none;
+  }
+
+  .btn:hover { border-color: rgba(229, 139, 156, 0.55); background: rgba(229, 139, 156, 0.08); }
+
+  .btn--primary { border-color: rgba(229, 139, 156, 0.6); background: rgba(229, 139, 156, 0.16); }
+
+  .btn--sm { padding: 5px 11px; font-size: 0.78rem; }
+  .btn--icon { padding: 4px 9px; }
+  .btn--danger:hover { color: var(--rose); }
+
+  .foot {
+    width: min(980px, calc(100% - 32px));
+    margin: 0 auto 40px;
+    font-size: 0.8rem;
+  }
+
+  .dim { color: var(--dim); }
+  .mono { font-family: var(--mono); font-size: 0.8rem; }
+
+  .status {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(229, 139, 156, 0.16);
+    border: 1px solid rgba(229, 139, 156, 0.5);
+    font-size: 0.84rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    max-width: calc(100% - 40px);
+  }
+
+  .status:not(:empty) { opacity: 1; }
+
+  /* ---- 浅色主题：和网站保持一致 ---- */
+  :root {
+    --bg: #f2f9f7;
+    --card: #ffffff;
+    --ink: #1e2f3e;
+    --dim: #61788a;
+    --rose: #2f9ff2;
+    --line: rgba(30, 60, 90, 0.14);
+  }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(900px 480px at 90% -10%, rgba(47, 159, 242, 0.10), transparent 62%),
+      radial-gradient(800px 420px at 4% 8%, rgba(49, 196, 141, 0.10), transparent 62%);
+  }
+
+  .bar { background: rgba(255, 255, 255, 0.94); }
+  .card { background: var(--card); box-shadow: 0 6px 18px rgba(23, 93, 154, 0.06); }
+  .row { background: #f7fbfc; }
+  .thumb { background: #e6eff3; }
+  input[type="text"], input[type="date"], select, textarea { background: #fff; }
+  .btn--primary { border-color: rgba(47, 159, 242, 0.6); background: rgba(47, 159, 242, 0.14); }
+  .status { background: rgba(47, 159, 242, 0.14); border-color: rgba(47, 159, 242, 0.55); color: var(--ink); }
+  .btn--danger:hover { color: #d9537a; border-color: rgba(217, 83, 122, 0.5); }
+
+  /* ---- 代码兜底面板：保存框被拦时，直接复制粘贴 ---- */
+  .codepanel {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(15, 40, 55, 0.55);
+    backdrop-filter: blur(4px);
+  }
+
+  .codepanel__box {
+    width: min(900px, 100%);
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(15, 40, 55, 0.25);
+  }
+
+  .codepanel__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .codepanel__head strong { font-size: 1rem; }
+  .codepanel__foot { display: flex; gap: 10px; justify-content: flex-end; }
+
+  #codepanel-text {
+    flex: 1;
+    min-height: 42vh;
+    max-height: 52vh;
+    margin: 0;
+    padding: 14px 16px;
+    background: #fbfdfe;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    white-space: pre;
+    text-align: left;
+    overflow: auto;
+    user-select: text;
+  }
+
+  @media (max-width: 560px) {
+    .row { flex-wrap: wrap; }
+    .row__tools { width: 100%; justify-content: flex-end; }
+    .bar__right { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar__left">
+    <strong>内容编辑器</strong>
+    <span class="dim">填完点导出 → 复制代码 → 粘贴进 js/ 里的同名文件</span>
+  </div>
+  <div class="bar__right">
+    <span id="size" class="dim"></span>
+    <a class="btn" href="index.html">看效果</a>
+    <button id="export-config" class="btn btn--primary" type="button">导出 config.js</button>
+    <button id="export-photos" class="btn" type="button">导出 photos-data.js</button>
+  </div>
+</header>
+
+<main>
+
+  <section class="card">
+    <h2>基本信息</h2>
+    <div class="grid">
+      <label class="field"><span>大标题</span><input id="f-title" type="text" placeholder="我们的宇宙"></label>
+      <label class="field"><span>副标题</span><input id="f-subtitle" type="text" placeholder="写给最重要的人"></label>
+      <label class="field"><span>你的名字</span><input id="f-me" type="text" placeholder="我"></label>
+      <label class="field"><span>她的名字</span><input id="f-you" type="text" placeholder="你"></label>
+      <label class="field"><span>在一起的第一天</span><input id="f-date" type="date"></label>
+      <label class="field"><span>信的落款</span><input id="f-sign" type="text" placeholder="—— 我"></label>
+    </div>
+    <div class="grid">
+      <label class="field"><span>页脚小字</span><input id="f-footer" type="text" placeholder="这里只有我们。"></label>
+      <label class="field"><span>猫的名字</span><input id="f-cat" type="text" placeholder="多米"></label>
+      <label class="field"><span>狗的名字</span><input id="f-dog" type="text" placeholder="熊猫"></label>
+      <label class="field"><span>背景音乐文件名</span><input id="f-music-src" type="text" placeholder="assets/music.mp3"></label>
+      <label class="field"><span>音乐显示名（可空）</span><input id="f-music-title" type="text" placeholder="背景音乐"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card__head">
+      <h2>相册 <span class="dim">（页面上的照片分区）</span></h2>
+      <div class="card__actions">
+        <button id="album-add" class="btn" type="button">加一个相册</button>
+      </div>
+    </div>
+    <p class="hint">每一行对应页面上的一块照片区域：左边是图标，中间是标题和说明。想加"生日""熊猫日常"之类的分区，就点「加一个相册」。</p>
+    <div id="album-rows" class="rows"></div>
+  </section>
+
+  <section class="card">
+    <div class="card__head">
+      <h2>照片 <span id="photo-count" class="dim"></span></h2>
+      <div class="card__actions">
+        <label class="btn">添加照片（可多选）<input id="photo-input" type="file" accept="image/*" multiple hidden></label>
+        <button id="photo-add-path" class="btn" type="button">手写一行文件名</button>
+      </div>
+    </div>
+    <p class="hint">图片会自动缩到 1400px 以内、转成 JPEG 内嵌进 photos-data.js，不用自己拷文件。每张下面的下拉框选它属于哪个相册，说明可以留空。</p>
+    <div id="photo-rows" class="rows"></div>
+  </section>
+
+  <section class="card">
+    <div class="card__head">
+      <h2>时间轴</h2>
+      <div class="card__actions">
+        <button id="timeline-add" class="btn" type="button">加一条</button>
+      </div>
+    </div>
+    <div id="timeline-rows" class="rows"></div>
+  </section>
+
+  <section class="card">
+    <h2>一封信</h2>
+    <p class="hint">空一行就是分一段。想写几段写几段。</p>
+    <textarea id="f-letter" rows="12" placeholder="第一段……&#10;&#10;第二段……"></textarea>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p class="dim">导出后把 <span class="mono">config.js</span> 和 <span class="mono">photos-data.js</span> 放进 <span class="mono">js/</span> 目录覆盖原文件，再刷新 <span class="mono">index.html</span>。改坏了也不怕：重新打开这个页面，内容还在（只要导出过）。</p>
+</footer>
+
+<p id="status" class="status" role="status"></p>
+
+<div class="codepanel" id="codepanel" hidden>
+  <div class="codepanel__box">
+    <div class="codepanel__head">
+      <strong id="codepanel-title">config.js</strong>
+      <span class="dim">保存框没弹出来也没关系：复制全部，粘贴进 js/ 下同名文件保存即可</span>
+    </div>
+    <pre id="codepanel-text"></pre>
+    <div class="codepanel__foot">
+      <button class="btn" type="button" id="codepanel-copy">复制全部</button>
+      <button class="btn btn--primary" type="button" id="codepanel-close">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/photos-data.js"></script>
+<script src="js/config.js"></script>
+<script src="js/editor.js"></script>
+</body>
+</html>

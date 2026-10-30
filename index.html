@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>恋瑄育记</title>
+<meta name="description" content="一个离线也能打开的小站。">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="assets/heart.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="edit-fab" id="edit-fab" href="edit.html" hidden>✎ 编辑内容</a>
+<script>
+  if (location.protocol === "file:") {
+    var fab = document.getElementById("edit-fab");
+    if (fab) fab.hidden = false;
+  }
+</script>
+
+<!-- 猫狗造型：改颜色只要改 css/style.css 里的 --cat-* / --dog-* 变量 -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="pet-cat" viewBox="0 0 200 220">
+    <!-- 尾巴 -->
+    <path d="M30 170 C 8 158 6 130 26 118" stroke="var(--cat-grey)" stroke-width="13" fill="none" stroke-linecap="round"/>
+    <!-- 身体 -->
+    <ellipse cx="100" cy="163" rx="55" ry="46" fill="var(--cat-body)" stroke="var(--cat-grey)" stroke-opacity="0.5" stroke-width="2"/>
+    <!-- 侧腹灰斑 -->
+    <path d="M126 128 q28 14 24 46 q-16 14 -32 8 q-14 -18 -8 -44 q6 -12 16 -10 z" fill="var(--cat-grey)" opacity="0.9"/>
+    <!-- 前爪 -->
+    <ellipse cx="74" cy="201" rx="14" ry="9" fill="#fff" stroke="var(--cat-grey)" stroke-width="2"/>
+    <ellipse cx="126" cy="201" rx="14" ry="9" fill="#fff" stroke="var(--cat-grey)" stroke-width="2"/>
+    <!-- 头 -->
+    <circle cx="100" cy="88" r="46" fill="var(--cat-body)" stroke="var(--cat-grey)" stroke-opacity="0.5" stroke-width="2"/>
+    <!-- 耳朵 -->
+    <path d="M60 60 L54 20 L94 46 Z" fill="var(--cat-grey)"/>
+    <path d="M140 60 L146 20 L106 46 Z" fill="var(--cat-grey)"/>
+    <path d="M64 54 L60 30 L86 47 Z" fill="var(--cat-pink)"/>
+    <path d="M136 54 L140 30 L114 47 Z" fill="var(--cat-pink)"/>
+    <!-- 头顶虎斑帽 -->
+    <path d="M100 41 C 73 41 61 58 59 75 C 71 66 84 61 100 61 C 116 61 129 66 141 75 C 139 58 127 41 100 41 Z" fill="var(--cat-grey)"/>
+    <!-- 两颊灰斑 -->
+    <path d="M58 80 q6 22 16 30 q-15 4 -21 -10 z" fill="var(--cat-grey)"/>
+    <path d="M142 80 q-6 22 -16 30 q15 4 21 -10 z" fill="var(--cat-grey)"/>
+    <!-- 额头 M 纹 -->
+    <path d="M92 50 v12 M100 45 v17 M108 50 v12" stroke="var(--cat-stripe)" stroke-width="5" stroke-linecap="round"/>
+    <!-- 眼睛（琥珀色） -->
+    <ellipse cx="82" cy="90" rx="9" ry="10" fill="var(--cat-eye)"/>
+    <ellipse cx="118" cy="90" rx="9" ry="10" fill="var(--cat-eye)"/>
+    <ellipse cx="82" cy="91" rx="4" ry="7" fill="#2b2620"/>
+    <ellipse cx="118" cy="91" rx="4" ry="7" fill="#2b2620"/>
+    <circle cx="85" cy="86" r="2.6" fill="#fff"/>
+    <circle cx="121" cy="86" r="2.6" fill="#fff"/>
+    <!-- 鼻子和嘴 -->
+    <path d="M100 102 l-6 5 q6 7 12 0 z" fill="var(--cat-pink)"/>
+    <path d="M100 108 q-6 9 -13 6 M100 108 q6 9 13 6" stroke="#c8b4aa" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- 胡须 -->
+    <g stroke="#cfc2bb" stroke-width="1.8" stroke-linecap="round">
+      <path d="M70 100 L44 95 M70 108 L44 110 M130 100 L156 95 M130 108 L156 110"/>
+    </g>
+    <!-- 项圈 -->
+    <path d="M82 128 q18 12 36 0 l-5 13 q-13 7 -26 0 z" fill="var(--blue)"/>
+  </symbol>
+
+  <symbol id="pet-dog" viewBox="0 0 200 220">
+    <!-- 尾巴 -->
+    <path d="M168 150 C 190 142 194 116 178 104" stroke="var(--dog-dark)" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <!-- 身体 -->
+    <ellipse cx="96" cy="165" rx="56" ry="44" fill="var(--dog-body)" stroke="var(--dog-dark)" stroke-opacity="0.45" stroke-width="2"/>
+    <!-- 背部黑斑 -->
+    <path d="M50 148 q28 -30 62 -18 q-4 24 -26 32 q-22 8 -36 -14 z" fill="var(--dog-dark)"/>
+    <!-- 腿 -->
+    <rect x="62" y="192" width="16" height="22" rx="8" fill="var(--dog-body)"/>
+    <rect x="118" y="192" width="16" height="22" rx="8" fill="var(--dog-body)"/>
+    <!-- 头 -->
+    <circle cx="100" cy="92" r="43" fill="var(--dog-body)" stroke="var(--dog-dark)" stroke-opacity="0.45" stroke-width="2"/>
+    <!-- 垂耳 -->
+    <path d="M60 72 q-8 42 12 54 q16 -20 6 -38 z" fill="var(--dog-dark)"/>
+    <path d="M140 72 q8 42 -12 54 q-16 -20 -6 -38 z" fill="var(--dog-dark)"/>
+    <!-- 眼周黑斑（熊猫脸） -->
+    <path d="M74 78 q12 30 32 20 l-16 -30 q-12 -6 -16 10 z" fill="var(--dog-dark)"/>
+    <!-- 眼睛 -->
+    <circle cx="84" cy="88" r="6.5" fill="#22282f"/>
+    <circle cx="117" cy="88" r="6" fill="#22282f"/>
+    <circle cx="86" cy="85" r="2.4" fill="#fff"/>
+    <circle cx="119" cy="85" r="2.4" fill="#fff"/>
+    <!-- 鼻子 -->
+    <ellipse cx="100" cy="100" rx="10" ry="7.5" fill="#2b3038"/>
+    <!-- 舌头 -->
+    <path d="M93 112 q7 10 14 0 q-3 12 -7 14 q-4 -2 -7 -14 z" fill="var(--dog-pink)"/>
+    <!-- 项圈 -->
+    <path d="M78 126 q22 12 44 0 l-5 12 q-17 8 -34 0 z" fill="var(--green)"/>
+  </symbol>
+
+  <!-- 花：颜色用 currentColor，谁用它就给谁设 color -->
+  <symbol id="bloom" viewBox="0 0 100 100">
+    <g fill="currentColor">
+      <ellipse cx="50" cy="24" rx="13" ry="17"/>
+      <ellipse cx="50" cy="24" rx="13" ry="17" transform="rotate(72 50 50)"/>
+      <ellipse cx="50" cy="24" rx="13" ry="17" transform="rotate(144 50 50)"/>
+      <ellipse cx="50" cy="24" rx="13" ry="17" transform="rotate(216 50 50)"/>
+      <ellipse cx="50" cy="24" rx="13" ry="17" transform="rotate(288 50 50)"/>
+    </g>
+    <circle cx="50" cy="50" r="11" fill="#ffd166"/>
+  </symbol>
+
+  <symbol id="sprig" viewBox="0 0 100 100">
+    <path d="M50 94 C 45 72 47 46 60 20" stroke="#4fa87a" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="42" cy="68" rx="13" ry="7" fill="#7ed6a5" transform="rotate(-26 42 68)"/>
+    <ellipse cx="58" cy="52" rx="13" ry="7" fill="#5fbf8a" transform="rotate(22 58 52)"/>
+    <ellipse cx="52" cy="34" rx="11" ry="6" fill="#7ed6a5" transform="rotate(-16 52 34)"/>
+    <ellipse cx="40" cy="44" rx="10" ry="6" fill="#5fbf8a" transform="rotate(-40 40 44)"/>
+  </symbol>
+
+  <symbol id="cluster" viewBox="0 0 130 130">
+    <use href="#sprig" x="4" y="34" width="104" height="104"/>
+    <use href="#bloom" x="16" y="6" width="64" height="64"/>
+    <use href="#bloom" x="62" y="30" width="52" height="52" opacity="0.95"/>
+    <use href="#bloom" x="40" y="58" width="38" height="38"/>
+  </symbol>
+</svg>
+
+<!-- 动态背景：太阳、风吹草花、猫狗在草地上跑 -->
+<div class="scene" aria-hidden="true">
+  <!-- 太阳：卡通圆脸 + 旋转光芒 -->
+  <svg class="scene__sun" viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <radialGradient id="sunCore" cx="38%" cy="32%" r="74%">
+        <stop offset="0" stop-color="#fffce8"/>
+        <stop offset="52%" stop-color="#ffe27e"/>
+        <stop offset="100%" stop-color="#ffc94d"/>
+      </radialGradient>
+    </defs>
+    <g class="scene__sun-rays" fill="#ffd166" opacity="0.9">
+      <path d="M100 12 L110 48 L90 48 Z"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(30 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(60 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(90 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(120 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(150 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(180 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(210 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(240 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(270 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(300 100 100)"/>
+      <path d="M100 12 L110 48 L90 48 Z" transform="rotate(330 100 100)"/>
+    </g>
+    <circle class="scene__sun-core" cx="100" cy="100" r="46" fill="url(#sunCore)"/>
+    <circle cx="86" cy="94" r="4.2" fill="#f6a93b" opacity="0.75"/>
+    <circle cx="114" cy="94" r="4.2" fill="#f6a93b" opacity="0.75"/>
+    <path d="M88 112 q12 10 24 0" stroke="#f6a93b" stroke-width="3.4" fill="none" stroke-linecap="round" opacity="0.75"/>
+  </svg>
+  <span class="scene__cloud scene__cloud--1"></span>
+  <span class="scene__cloud scene__cloud--2"></span>
+  <span class="scene__cloud scene__cloud--3"></span>
+  <div class="scene__leaves" id="scene-leaves"></div>
+
+  <div class="scene__meadow">
+    <div class="scene__grass scene__grass--back"></div>
+    <div class="scene__grass scene__grass--front"></div>
+    <div class="scene__blooms"></div>
+
+    <!-- 多米：白底灰虎斑美短，侧身跑 -->
+    <span class="scene__run scene__run--cat">
+      <svg class="scene__pet scene__pet--cat" viewBox="0 0 200 150" aria-hidden="true">
+        <path class="tail" d="M44 84 C 20 76 14 50 30 36" fill="none" stroke="#97a3ae" stroke-width="9" stroke-linecap="round"/>
+        <g class="legs">
+          <path class="leg leg--b1" d="M70 98 C 66 114 62 126 58 136" fill="none" stroke="#e7ecef" stroke-width="10" stroke-linecap="round"/>
+          <path class="leg leg--b2" d="M86 100 C 88 116 90 128 92 138" fill="none" stroke="#a9b6c1" stroke-width="10" stroke-linecap="round"/>
+        </g>
+        <ellipse cx="104" cy="90" rx="58" ry="31" fill="#ffffff" stroke="#97a3ae" stroke-opacity="0.5" stroke-width="2"/>
+        <path d="M62 70 C 78 58 102 56 122 62 C 114 78 96 86 76 86 C 68 84 62 78 62 70 Z" fill="#97a3ae"/>
+        <path d="M92 62 v10 M104 58 v12 M116 62 v10" stroke="#6c7883" stroke-width="5" stroke-linecap="round" opacity="0.75"/>
+        <circle cx="158" cy="72" r="27" fill="#ffffff" stroke="#97a3ae" stroke-opacity="0.5" stroke-width="2"/>
+        <path d="M138 52 L133 24 L157 42 Z" fill="#97a3ae"/>
+        <path d="M178 50 L185 24 L163 40 Z" fill="#97a3ae"/>
+        <path d="M158 46 C 144 46 136 56 135 66 C 144 60 152 58 160 58 C 168 58 176 60 181 66 C 179 56 172 46 158 46 Z" fill="#97a3ae"/>
+        <circle cx="166" cy="72" r="5.4" fill="#e0a13c"/>
+        <circle cx="166.6" cy="72.6" r="2.6" fill="#2b2620"/>
+        <circle cx="167.6" cy="71" r="1.1" fill="#fff"/>
+        <path d="M179 76 l4.4 3.2 q-4.4 4.4 -8.8 0 z" fill="#f0a3b2"/>
+        <path d="M180 81 L197 78 M180 85 L197 87" stroke="#cfc2bb" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M134 90 q13 9 26 2 l-3 9 q-11 5 -20 -1 z" fill="#2f9ff2"/>
+        <g class="legs">
+          <path class="leg leg--f1" d="M132 98 C 136 114 140 126 144 136" fill="none" stroke="#dfe7ec" stroke-width="10" stroke-linecap="round"/>
+          <path class="leg leg--f2" d="M116 100 C 116 116 114 128 112 138" fill="none" stroke="#c9d4dc" stroke-width="10" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </span>
+
+    <!-- 熊猫：黑白，侧身跑 -->
+    <span class="scene__run scene__run--dog">
+      <svg class="scene__pet scene__pet--dog" viewBox="0 0 200 150" aria-hidden="true">
+        <path class="tail" d="M42 80 C 18 68 18 44 36 32" fill="none" stroke="#2e3640" stroke-width="9" stroke-linecap="round"/>
+        <g class="legs">
+          <path class="leg leg--b1" d="M70 98 C 66 114 62 126 58 136" fill="none" stroke="#2e3640" stroke-width="10" stroke-linecap="round"/>
+          <path class="leg leg--b2" d="M86 100 C 88 116 90 128 92 138" fill="none" stroke="#e6e0d6" stroke-width="10" stroke-linecap="round"/>
+        </g>
+        <ellipse cx="102" cy="88" rx="58" ry="31" fill="#faf7f2" stroke="#2e3640" stroke-opacity="0.45" stroke-width="2"/>
+        <path d="M60 68 C 80 54 108 52 128 62 C 120 78 98 86 78 84 C 68 82 60 76 60 68 Z" fill="#2e3640"/>
+        <circle cx="156" cy="72" r="27" fill="#faf7f2" stroke="#2e3640" stroke-opacity="0.45" stroke-width="2"/>
+        <path d="M140 56 q-13 24 3 36 q11 -9 6 -24 z" fill="#2e3640"/>
+        <path d="M152 62 q11 15 22 9 l-9 -17 q-9 -2 -13 8 z" fill="#2e3640"/>
+        <circle cx="164" cy="70" r="5" fill="#fff"/>
+        <circle cx="164.6" cy="70.6" r="2.6" fill="#22282f"/>
+        <ellipse cx="179" cy="78" rx="7" ry="5.4" fill="#2b3038"/>
+        <path d="M175 86 q4 8 8 0 q-1 7 -4 9 q-3 -2 -4 -9 z" fill="#f0a3b2"/>
+        <path d="M132 90 q13 9 26 2 l-3 9 q-11 5 -20 -1 z" fill="#31c48d"/>
+        <g class="legs">
+          <path class="leg leg--f1" d="M130 98 C 134 114 138 126 142 136" fill="none" stroke="#e6e0d6" stroke-width="10" stroke-linecap="round"/>
+          <path class="leg leg--f2" d="M114 100 C 114 116 112 128 110 138" fill="none" stroke="#2e3640" stroke-width="10" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </span>
+  </div>
+
+  <!-- 微风：飘过的花瓣 -->
+  <span class="scene__petal scene__petal--1"></span>
+  <span class="scene__petal scene__petal--2"></span>
+  <span class="scene__petal scene__petal--3"></span>
+  <span class="scene__petal scene__petal--4"></span>
+  <span class="scene__petal scene__petal--5"></span>
+  <span class="scene__petal scene__petal--6"></span>
+</div>
+
+<!-- 两侧图钉照片墙（照片由 main.js 填充） -->
+<aside class="rail rail--left" id="rail-left" aria-hidden="true"></aside>
+<aside class="rail rail--right" id="rail-right" aria-hidden="true"></aside>
+
+<header class="hero" id="top">
+  <div class="hero__blob hero__blob--1" aria-hidden="true"></div>
+  <div class="hero__blob hero__blob--2" aria-hidden="true"></div>
+
+  <div class="music-card" id="music-card">
+    <button type="button" class="music-card__btn" id="music-toggle" aria-label="播放背景音乐">
+      <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L19 12z" fill="currentColor"/></svg>
+      <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.6 5h3.4v14H7.6zM13 5h3.4v14H13z" fill="currentColor"/></svg>
+    </button>
+    <div class="music-card__info">
+      <span class="music-card__label">背景音乐</span>
+      <span class="music-card__title" id="music-title">背景音乐</span>
+      <div class="music-card__bar" id="music-bar" role="progressbar" aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="music-card__bar-fill" id="music-fill"></div>
+      </div>
+    </div>
+    <span class="music-card__time" id="music-time">0:00 / 0:00</span>
+    <div class="music-card__vol">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4.5 9.5h3L12 6v12l-4.5-3.5h-3z" fill="currentColor"/>
+        <path d="M15.5 8.6a4.6 4.6 0 0 1 0 6.8" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <path d="M18 6.2a8 8 0 0 1 0 11.6" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.6"/>
+      </svg>
+      <input type="range" id="music-volume" min="0" max="100" step="1" value="50" aria-label="音量">
+    </div>
+  </div>
+
+  <p class="hero__eyebrow" data-bind="subtitle">写给最重要的人</p>
+  <h1 class="hero__title" data-bind="title">我们的宇宙</h1>
+  <p class="hero__names" data-bind="names"></p>
+
+  <div class="counter">
+    <div class="counter__item">
+      <span class="counter__num" data-bind="daysTogether">—</span>
+      <span class="counter__label">天，在一起</span>
+    </div>
+    <span class="counter__divider" aria-hidden="true"></span>
+    <div class="counter__item">
+      <span class="counter__num" data-bind="nextAnnivDays">—</span>
+      <span class="counter__label" data-bind="nextAnnivLabel">纪念日还没填</span>
+    </div>
+  </div>
+
+  <p class="counter__since" data-bind="since"></p>
+
+  <nav class="nav" aria-label="页面导航">
+    <a href="#albums">相册</a>
+    <a href="#to-her">留给你</a>
+    <a href="#meeting">见面日历</a>
+    <a href="#wishlist">清单</a>
+    <a href="#game">小游戏</a>
+    <a href="#storms">风雨时刻</a>
+    <a href="#letter">一封信</a>
+  </nav>
+
+  <svg class="pet pet--cat" role="img" aria-label="多米"><use href="#pet-cat" xlink:href="#pet-cat"></use></svg>
+  <svg class="pet pet--dog" role="img" aria-label="熊猫"><use href="#pet-dog" xlink:href="#pet-dog"></use></svg>
+</header>
+
+<main>
+
+  <section class="section" id="albums">
+    <div class="wrap">
+      <p class="eyebrow">01 / 相册</p>
+      <h2 class="h2">每个时刻，<span class="hl">都值得一页</span></h2>
+      <p class="lede">点开任意一个相册，里面的照片会整版铺开。加照片只要放进 assets/photos/ 对应的文件夹，再跑一次生成脚本。</p>
+      <div id="album-list"></div>
+    </div>
+  </section>
+
+  <section class="section" id="to-her">
+    <div class="wrap">
+      <p class="eyebrow">02 / 留给你</p>
+      <h2 class="h2">这一页，<span class="hl">等你来填</span></h2>
+      <p class="lede">四个问题，想到什么写什么。填完点下面的按钮，会生成一段话，把它发给我，我就放到网站上。</p>
+
+      <form class="ask" id="ask-form">
+        <label class="ask__item">
+          <span class="ask__no">01</span>
+          <span class="ask__q">如果要用一首歌形容我们，你会选哪首？</span>
+          <textarea class="ask__input" rows="1" data-ask="0" placeholder="想到什么写什么…"></textarea>
+        </label>
+        <label class="ask__item">
+          <span class="ask__no">02</span>
+          <span class="ask__q">今年最想我陪你做的一件事？</span>
+          <textarea class="ask__input" rows="1" data-ask="1" placeholder="想到什么写什么…"></textarea>
+        </label>
+        <label class="ask__item">
+          <span class="ask__no">03</span>
+          <span class="ask__q">关于张奶奶，你想说的一句话？</span>
+          <textarea class="ask__input" rows="1" data-ask="2" placeholder="想到什么写什么…"></textarea>
+        </label>
+        <label class="ask__item">
+          <span class="ask__no">04</span>
+          <span class="ask__q">想对三年后的我们说什么？</span>
+          <textarea class="ask__input" rows="1" data-ask="3" placeholder="想到什么写什么…"></textarea>
+        </label>
+
+        <div class="ask__actions">
+          <button type="submit" class="btn btn--primary-solid">生成我的答案</button>
+          <button type="button" class="btn" id="ask-clear">全部清空</button>
+        </div>
+      </form>
+
+      <div class="ask__result" id="ask-result" hidden>
+        <p class="ask__result-tip">复制下面这段话发给我就行：</p>
+        <pre class="ask__pre" id="ask-text"></pre>
+        <button type="button" class="btn btn--primary-solid" id="ask-copy">复制这段话</button>
+        <p class="ask__msg" id="ask-msg" role="status"></p>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="meeting">
+    <div class="wrap">
+      <p class="eyebrow">03 / 见面的日子</p>
+      <h2 class="h2">今年，我们一起过过 <span class="hl">这些天</span></h2>
+      <p class="lede">日历上标出来的就是见面的日子，连着的几天算一次。点一下，能翻那几天拍的照片。</p>
+      <div class="cal-strip" id="cal-strip"></div>
+      <div class="cal-months" id="cal-months"></div>
+      <p class="cal-note" id="cal-note" hidden></p>
+    </div>
+  </section>
+
+  <section class="section" id="wishlist">
+    <div class="wrap">
+      <p class="eyebrow">04 / 一起要做的事</p>
+      <h2 class="h2">一百件小事，<span class="hl hl--green">一件一件来</span></h2>
+      <p class="lede">点一下就当作做到了。勾选会记在这台电脑的浏览器里（换电脑不会同步）。</p>
+      <div class="wishlist" id="wishlist-host"></div>
+    </div>
+  </section>
+
+  <section class="section" id="game">
+    <div class="wrap">
+      <p class="eyebrow">05 / 小游戏</p>
+      <h2 class="h2">王子出发，<span class="hl">去救张子龙</span></h2>
+      <p class="lede">田育瑄当王子，张子龙被关在笼子里。躲开士兵射来的箭，走到笼子那儿把他救出来。你有 5 点血；倒下后答对一道小题能复活，但只恢复 1.5 滴血。另外还有戴红头巾的近战兵会冲上来砍你。要是连着倒下三次——张子龙会自己撞开笼子出来。</p>
+
+      <div class="arcade">
+        <div class="arcade__bar">
+          <span class="arcade__hint">方向键 / WASD 移动 · 空格投掷</span>
+          <div class="arcade__tools">
+            <button type="button" class="arcade__tool" id="game-restart" aria-label="重新开始">↻ 重开</button>
+            <button type="button" class="arcade__tool" id="game-sound" aria-pressed="true" aria-label="音效开关">🔊 音效</button>
+            <button type="button" class="arcade__tool" id="game-full" aria-label="全屏">⛶ 全屏</button>
+          </div>
+        </div>
+
+        <div class="arcade__stage">
+          <canvas id="game-canvas" width="640" height="384" tabindex="0" aria-label="拯救张子龙小游戏"></canvas>
+
+          <div class="game-overlay" id="game-overlay" hidden>
+            <div class="game-overlay__box">
+              <img class="game-cover" id="game-cover" src="assets/deco/game-cover.svg" alt="王子救人之旅封面" hidden>
+              <h3 id="game-overlay-title">王子救人之旅</h3>
+              <p id="game-overlay-text"></p>
+              <ul class="game-tips" id="game-tips" hidden>
+                <li><b>移动</b>方向键 / WASD；手机用下面的方向键</li>
+                <li><b>攻击</b>空格键，或点画面 / 「投掷 ♥」；朝上、下、左、右都能扔</li>
+                <li><b>受伤</b>被打中掉 1 点血，之后有 1 秒无敌</li>
+                <li><b>草丛</b>钻进去会隐身：士兵打不到你，但你也打不到他</li>
+                <li><b>视野</b>士兵只在离你约 4–5 格、且中间没墙时才看得见你；被发现时头顶会冒「!」</li>
+                <li><b>近战兵</b>戴红头巾的那两个会追上来砍，被贴身就掉血</li>
+                <li><b>士兵</b>被打倒后会从别处重新冒出来，留神</li>
+                <li><b>目标</b>走到右下角的笼子，把张子龙救出来</li>
+              </ul>
+              <p class="game-question" id="game-question" hidden></p>
+              <div class="game-overlay__answers" id="game-overlay-answers" hidden></div>
+              <div class="game-ask" id="game-ask" hidden>
+                <input type="text" id="game-answer-input" class="game-ask__input" placeholder="输入你的答案…" autocomplete="off" aria-label="答案">
+                <button type="button" class="btn btn--primary-solid" id="game-answer-submit">提交</button>
+              </div>
+              <div class="game-overlay__btns">
+                <button type="button" class="btn btn--primary-solid" id="game-overlay-btn">开始</button>
+                <button type="button" class="btn game-overlay__second" id="game-overlay-btn2" hidden>确定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arcade__pad" aria-hidden="false">
+          <div class="arcade__dpad">
+            <button type="button" class="arcade__key arcade__key--up" data-game-key="up" aria-label="上">▲</button>
+            <button type="button" class="arcade__key arcade__key--left" data-game-key="left" aria-label="左">◀</button>
+            <button type="button" class="arcade__key arcade__key--right" data-game-key="right" aria-label="右">▶</button>
+            <button type="button" class="arcade__key arcade__key--down" data-game-key="down" aria-label="下">▼</button>
+          </div>
+          <button type="button" class="arcade__fire" data-game-key="fire">投掷 ♥</button>
+        </div>
+      </div>
+
+      <p class="arcade__tip">键盘：方向键 / WASD 移动，空格投掷。手机：用下面的方向键和按钮。</p>
+    </div>
+  </section>
+
+  <section class="section storm-section" id="storms">
+    <div class="storm-bg" aria-hidden="true">
+      <span class="storm-cloud storm-cloud--1"></span>
+      <span class="storm-cloud storm-cloud--2"></span>
+      <span class="storm-cloud storm-cloud--3"></span>
+      <span class="storm-rain"></span>
+      <span class="storm-wind"></span>
+      <span class="storm-flash"></span>
+    </div>
+    <div class="wrap">
+      <p class="eyebrow eyebrow--storm">06 / 风雨时刻</p>
+      <h2 class="h2 h2--storm">当然，<span class="hl-storm">美好的感情都不会一帆风顺</span></h2>
+      <p class="lede lede--storm">吵过的每一件事都记在这里。不是为了记账，是为了记住我们怎么把话说完的。</p>
+      <div id="storm-list" class="storms"></div>
+    </div>
+  </section>
+
+  <section class="section" id="letter">
+    <div class="wrap">
+      <p class="eyebrow">07 / 一封信</p>
+      <h2 class="h2">有些话，<span class="hl hl--green">写下来更久</span></h2>
+
+      <div class="letter-lock" id="letter-lock">
+        <p class="letter-lock__icon" aria-hidden="true">🔒</p>
+        <p class="letter-lock__title">这封信还锁着</p>
+        <p class="letter-lock__text">通关「王子救人之旅」小游戏会临时打开；重新打开网页后需要再输一次密码。</p>
+        <div class="letter-lock__form">
+          <input type="password" id="letter-password" placeholder="输入密码" autocomplete="off" aria-label="解锁密码">
+          <button type="button" class="btn btn--primary-solid" id="letter-unlock-btn">解锁</button>
+        </div>
+        <p class="letter-lock__msg" id="letter-lock-msg" role="status"></p>
+      </div>
+
+      <div class="letter-content" id="letter-content" hidden>
+        <article class="letter" id="letter-body"></article>
+        <p class="letter__sign" data-bind="sign"></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__pets" aria-hidden="true">
+    <svg class="pet--mini" role="img" aria-label="多米"><use href="#pet-cat" xlink:href="#pet-cat"></use></svg>
+    <svg class="pet--mini" role="img" aria-label="熊猫"><use href="#pet-dog" xlink:href="#pet-dog"></use></svg>
+  </div>
+  <p data-bind="footer"></p>
+</footer>
+
+<audio id="bgm" preload="metadata"></audio>
+
+<div class="album-view" id="album-view" hidden>
+  <div class="album-view__panel" role="dialog" aria-modal="true" aria-labelledby="album-view-title">
+    <header class="album-view__head">
+      <button type="button" class="album-view__icon-btn" id="album-view-back" aria-label="返回">←</button>
+      <div class="album-view__meta">
+        <h3 id="album-view-title"></h3>
+        <p id="album-view-count"></p>
+      </div>
+      <button type="button" class="album-view__icon-btn" id="album-view-close" aria-label="关闭">×</button>
+    </header>
+    <div class="photos photos--view" id="album-view-grid"></div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button type="button" class="lightbox__close" id="lightbox-close" aria-label="关闭">×</button>
+  <figure class="lightbox__fig">
+    <img id="lightbox-img" alt="">
+    <figcaption id="lightbox-cap" class="lightbox__cap"></figcaption>
+  </figure>
+</div>
+
+<noscript>
+  <p style="padding:24px;text-align:center">这个页面需要开启 JavaScript 才能看到内容。</p>
+</noscript>
+
+<script src="js/photos-data.js"></script>
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
