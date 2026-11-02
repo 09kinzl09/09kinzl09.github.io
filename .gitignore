@@ -1,0 +1,12 @@
+# 只在本地用，不上传
+_preview/
+scripts/
+*.ps1
+*.cmd
+*.md
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# 原始素材备份（不在站点目录里，双保险）
+原始素材备份/
