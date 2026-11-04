@@ -718,9 +718,19 @@
     }
 
     items.forEach(function (item) {
-      // ---- 问题记录版：只显示类型/程度/问题概括/后来怎么改的 ----
+      // ---- 问题记录：每个问题一个 canvas 小场景（乌云/雨/闪电） ----
       if (item && item.kind) {
         var rCard = el("article", "rift reveal");
+
+        var sceneCanvas = document.createElement("canvas");
+        sceneCanvas.className = "rift__canvas";
+        sceneCanvas.setAttribute("aria-hidden", "true");
+        rCard.appendChild(sceneCanvas);
+
+        var veil = el("div", "rift__veil");
+        rCard.appendChild(veil);
+
+        var overlay = el("div", "rift__overlay");
 
         var rHead = el("header", "rift__head");
         var kindEl = el("span", "rift__kind");
@@ -729,25 +739,22 @@
         dateEl.textContent = pick(item.date, "");
         rHead.appendChild(kindEl);
         rHead.appendChild(dateEl);
-        rCard.appendChild(rHead);
+        overlay.appendChild(rHead);
 
-        // 影响程度：5 个点
         var level = Number(item.level);
         if (!isNaN(level) && level > 0) {
           var dotsEl = el("div", "rift__level");
           dotsEl.setAttribute("title", "影响程度 " + level + "/5");
           for (var d = 1; d <= 5; d++) {
-            var dot = el("i", "rift__dot" + (d <= level ? " is-on" : ""));
-            dotsEl.appendChild(dot);
+            dotsEl.appendChild(el("i", "rift__dot" + (d <= level ? " is-on" : "")));
           }
-          rCard.appendChild(dotsEl);
+          overlay.appendChild(dotsEl);
         }
 
         var issueEl = el("p", "rift__issue");
         issueEl.textContent = pick(item.issue, "");
-        rCard.appendChild(issueEl);
+        overlay.appendChild(issueEl);
 
-        // 节选（不是全文，只是那一两句）
         var excerpts = Array.isArray(item.excerpts) ? item.excerpts : [];
         if (excerpts.length) {
           var quoteBox = el("div", "rift__quotes");
@@ -757,11 +764,11 @@
           excerpts.forEach(function (line) {
             var text = pick(line, "");
             if (!text) return;
-            var p = el("p", "rift__quote");
-            p.textContent = "「" + text + "」";
-            quoteBox.appendChild(p);
+            var q = el("p", "rift__quote");
+            q.textContent = "「" + text + "」";
+            quoteBox.appendChild(q);
           });
-          rCard.appendChild(quoteBox);
+          overlay.appendChild(quoteBox);
         }
 
         var fixText = pick(item.fix, "");
@@ -774,7 +781,7 @@
           fixBody.textContent = fixText;
           fixEl.appendChild(fixIcon);
           fixEl.appendChild(fixBody);
-          rCard.appendChild(fixEl);
+          overlay.appendChild(fixEl);
         }
 
         var rTags = Array.isArray(item.tags) ? item.tags : [];
@@ -785,10 +792,13 @@
             li.textContent = pick(tag, "");
             if (li.textContent) tagList.appendChild(li);
           });
-          rCard.appendChild(tagList);
+          overlay.appendChild(tagList);
         }
 
+        rCard.appendChild(overlay);
         host.appendChild(rCard);
+
+        riftScenes.push({ canvas: sceneCanvas, level: isNaN(level) ? 3 : level, toneSeed: riftScenes.length % 4 });
         return;
       }
       var card = el("article", "storm reveal");
@@ -827,8 +837,198 @@
 
       host.appendChild(card);
     });
+
+    initRiftScenes();
   }
 
+  /* ---------- 风雨时刻：每个问题一个 canvas 小场景 ---------- */
+
+  var riftScenes = [];
+  var riftRaf = null;
+  var riftVisible = new Set();
+
+  function setupRiftScene(scene) {
+    var canvas = scene.canvas;
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    var w = canvas.clientWidth || 600;
+    var h = canvas.clientHeight || 320;
+
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    scene.ctx = ctx;
+    scene.w = w;
+    scene.h = h;
+    scene.t = 0;
+    scene.tone = (scene.toneSeed || 0);
+    scene.flash = 0;
+    scene.nextFlash = 2.5 + Math.random() * 5;
+    scene.dpr = dpr;
+
+    // 雨滴数量按影响程度递增
+    var count = 40 + scene.level * 26;
+    scene.drops = [];
+    for (var i = 0; i < count; i++) {
+      scene.drops.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        len: 9 + Math.random() * 14,
+        sp: 130 + Math.random() * 160,
+        a: 0.3 + Math.random() * 0.45
+      });
+    }
+
+    // 云
+    scene.clouds = [];
+    for (var c = 0; c < 4; c++) {
+      scene.clouds.push({
+        x: Math.random() * w,
+        y: 8 + Math.random() * (h * 0.42),
+        r: 42 + Math.random() * 52,
+        sp: 5 + Math.random() * 9,
+        a: 0.34 + Math.random() * 0.22
+      });
+    }
+  }
+
+  function drawRiftScene(scene, dt) {
+    var ctx = scene.ctx;
+    var w = scene.w;
+    var h = scene.h;
+    if (!ctx) return;
+
+    scene.t += dt;
+
+    // 天空：按影响程度与色相变化，让每张卡有自己的"天色"
+    var tone = scene.tone || 0;
+    var rBase = 30 + tone * 7;
+    var gBase = 44 + tone * 4;
+    var bBase = 74 - tone * 6;
+    var g = ctx.createLinearGradient(0, 0, w * 0.3, h);
+    g.addColorStop(0, "rgba(" + (rBase + 22) + ", " + (gBase + 22) + ", " + (bBase + 24) + ", 1)");
+    g.addColorStop(0.5, "rgba(" + rBase + ", " + gBase + ", " + bBase + ", 1)");
+    g.addColorStop(1, "rgba(" + (rBase - 14) + ", " + (gBase - 12) + ", " + (bBase - 16) + ", 1)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    // 文字背后的柔光
+    var glow = ctx.createRadialGradient(w * 0.35, h * 0.3, 10, w * 0.35, h * 0.3, Math.max(w, h) * 0.7);
+    glow.addColorStop(0, "rgba(150, 190, 230, 0.16)");
+    glow.addColorStop(1, "rgba(150, 190, 230, 0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+
+    // 云
+    scene.clouds.forEach(function (cl) {
+      cl.x += cl.sp * dt;
+      if (cl.x - cl.r > w) cl.x = -cl.r;
+      var cg = ctx.createRadialGradient(cl.x, cl.y, cl.r * 0.2, cl.x, cl.y, cl.r);
+      cg.addColorStop(0, "rgba(10, 16, 26, " + (cl.a + 0.34) + ")");
+      cg.addColorStop(0.6, "rgba(16, 24, 36, " + cl.a + ")");
+      cg.addColorStop(1, "rgba(16, 24, 36, 0)");
+      ctx.fillStyle = cg;
+      ctx.beginPath();
+      ctx.arc(cl.x, cl.y, cl.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // 雨
+    ctx.strokeStyle = "rgba(200, 225, 255, 0.9)";
+    ctx.lineWidth = 1;
+    scene.drops.forEach(function (d) {
+      d.y += d.sp * dt;
+      d.x -= d.sp * 0.28 * dt;
+      if (d.y > h + 12) { d.y = -12; d.x = Math.random() * w; }
+      if (d.x < -12) d.x = w + 12;
+      ctx.globalAlpha = d.a;
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x + d.len * 0.28, d.y + d.len);
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+
+    // 闪电（程度 >=4 才闪）
+    if (scene.level >= 4) {
+      scene.nextFlash -= dt;
+      if (scene.nextFlash <= 0) {
+        scene.flash = 0;
+        scene.nextFlash = 4 + Math.random() * 7;
+      }
+      if (scene.flash > 0) {
+        ctx.fillStyle = "rgba(255, 255, 255, " + (scene.flash * 0.28) + ")";
+        ctx.fillRect(0, 0, w, h);
+        scene.flash -= dt * 4;
+      }
+    }
+
+    // 底部渐隐，让文字更好读
+    var fade = ctx.createLinearGradient(0, h * 0.25, 0, h);
+    fade.addColorStop(0, "rgba(10, 18, 28, 0)");
+    fade.addColorStop(1, "rgba(6, 12, 20, 0.88)");
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, h * 0.35, w, h * 0.65);
+  }
+
+  function riftLoop(ts) {
+    if (!riftRaf) return;
+    if (!riftLoop.last) riftLoop.last = ts;
+    var dt = Math.min((ts - riftLoop.last) / 1000, 0.05);
+    riftLoop.last = ts;
+
+    riftScenes.forEach(function (scene, i) {
+      if (!riftVisible.has(i)) return;
+      drawRiftScene(scene, dt);
+    });
+
+    riftRaf = requestAnimationFrame(riftLoop);
+  }
+
+  function initRiftScenes() {
+    if (!riftScenes.length) return;
+
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    riftScenes.forEach(function (scene, i) {
+      setupRiftScene(scene);
+      // 先画一帧，保证任何情况下都有画面（不依赖可见性回调）
+      drawRiftScene(scene, 0.016);
+      riftVisible.add(i);
+    });
+
+    if (reduce) return;
+
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          var idx = riftScenes.findIndex(function (s) { return s.canvas === entry.target; });
+          if (idx < 0) return;
+          if (entry.isIntersecting) riftVisible.add(idx);
+          else riftVisible.delete(idx);
+        });
+      }, { rootMargin: "120px" });
+      riftScenes.forEach(function (s) { io.observe(s.canvas); });
+    } else {
+      riftScenes.forEach(function (s, i) { riftVisible.add(i); });
+    }
+
+    riftLoop.last = 0;
+    riftRaf = requestAnimationFrame(riftLoop);
+  }
+
+  var riftResizeTimer = null;
+  window.addEventListener("resize", function () {
+    if (riftResizeTimer) clearTimeout(riftResizeTimer);
+    riftResizeTimer = setTimeout(function () {
+      riftScenes.forEach(function (scene, i) {
+        setupRiftScene(scene);
+        if (riftVisible.has(i)) drawRiftScene(scene, 0.016);
+      });
+    }, 220);
+  });
   /* ---------- 两侧图钉照片墙 ---------- */
 
   var RAIL_TILTS = [-6, 4, -3, 5];

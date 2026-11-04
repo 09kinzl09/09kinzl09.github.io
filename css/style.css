@@ -2589,30 +2589,41 @@ a { color: inherit; text-decoration: none; }
 
 .arcade__stage:fullscreen .game-overlay__box { width: min(560px, 82vw); }
 
+
 /* ============================================================
-   风雨时刻 · 问题记录（裂缝与修补）
+   风雨时刻 · 每段一个小场景（canvas 乌云/雨/闪电）
    ============================================================ */
 
 .rift {
   position: relative;
-  padding: 18px 20px 16px 22px;
-  margin-bottom: 14px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 8px 24px rgba(4, 16, 26, 0.22);
+  margin-bottom: 18px;
+  border-radius: 20px;
   overflow: hidden;
+  border: 1px solid rgba(160, 190, 220, 0.22);
+  box-shadow: 0 14px 36px rgba(3, 12, 22, 0.4);
+  min-height: 300px;
 }
 
-/* 左边那条"裂缝" */
-.rift::before {
-  content: "";
+.rift__canvas {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, #ff9aa9 0%, #ffc9d2 45%, #9fd8c4 100%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.rift__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 18% 0%, rgba(120, 160, 200, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(4, 10, 18, 0.18) 0%, rgba(4, 10, 18, 0.42) 100%);
+  pointer-events: none;
+}
+
+.rift__overlay {
+  position: relative;
+  padding: 22px 24px 20px;
 }
 
 .rift__head {
@@ -2625,8 +2636,9 @@ a { color: inherit; text-decoration: none; }
 .rift__kind {
   padding: 3px 12px;
   border-radius: 999px;
-  background: #fff1f4;
-  color: #c2557a;
+  background: rgba(255, 143, 163, 0.18);
+  border: 1px solid rgba(255, 143, 163, 0.45);
+  color: #ffd7e0;
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -2634,13 +2646,13 @@ a { color: inherit; text-decoration: none; }
 
 .rift__date {
   font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  color: var(--ink-dim);
+  letter-spacing: 0.14em;
+  color: rgba(210, 228, 245, 0.75);
 }
 
 .rift__level {
   display: flex;
-  gap: 4px;
+  gap: 5px;
   margin: 10px 0 8px;
 }
 
@@ -2648,30 +2660,63 @@ a { color: inherit; text-decoration: none; }
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: rgba(120, 140, 150, 0.28);
+  background: rgba(190, 210, 230, 0.28);
 }
 
 .rift__dot.is-on { background: #ff8fa3; }
 
 .rift__issue {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.75;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.7;
+  color: #f4f9ff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+.rift__quotes {
+  position: relative;
+  margin: 14px 0 0;
+  padding: 12px 14px 10px;
+  border-left: 3px solid rgba(255, 143, 163, 0.55);
+  border-radius: 0 12px 12px 0;
+  background: rgba(12, 22, 34, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.rift__quotes-label {
+  position: absolute;
+  top: -9px;
+  left: 10px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(255, 143, 163, 0.9);
+  color: #4a1b28;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.rift__quote {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: #e6eef8;
+  font-style: italic;
 }
 
 .rift__fix {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin: 10px 0 0;
-  padding: 9px 12px;
+  margin: 12px 0 0;
+  padding: 10px 12px;
   border-radius: 10px;
-  background: #f1faf5;
+  background: rgba(120, 210, 165, 0.16);
+  border: 1px solid rgba(120, 210, 165, 0.3);
   font-size: 0.86rem;
-  line-height: 1.7;
-  color: #2c5a45;
+  line-height: 1.75;
+  color: #d6f5e6;
 }
 
 .rift__fix-icon { flex: 0 0 auto; font-size: 0.9rem; }
@@ -2688,43 +2733,20 @@ a { color: inherit; text-decoration: none; }
 .rift__tags li {
   padding: 2px 10px;
   border-radius: 999px;
-  background: #f4f8fb;
-  border: 1px solid rgba(47, 159, 242, 0.18);
+  background: rgba(190, 215, 240, 0.14);
+  border: 1px solid rgba(190, 215, 240, 0.22);
   font-size: 0.7rem;
-  color: var(--blue-deep);
+  color: #cfe2f5;
 }
 
 @media (max-width: 560px) {
-  .rift { padding: 16px 16px 14px 18px; }
-  .rift__issue { font-size: 0.9rem; }
+  .rift { min-height: 340px; }
+  .rift__overlay { padding: 18px 16px 16px; }
+  .rift__issue { font-size: 0.95rem; }
+  .rift__quote { font-size: 0.84rem; }
 }
-/* 节选：只露一两句，其余不展示 */
-.rift__quotes {
-  position: relative;
-  margin: 12px 0 0;
-  padding: 10px 12px 10px 14px;
-  border-left: 3px solid rgba(255, 143, 163, 0.5);
-  border-radius: 0 10px 10px 0;
-  background: #fffafb;
-}
-
-.rift__quotes-label {
-  position: absolute;
-  top: -9px;
-  left: 10px;
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: #ffe9ee;
-  color: #c2557a;
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.rift__quote {
-  margin: 4px 0 0;
-  font-size: 0.86rem;
-  line-height: 1.75;
-  color: #5a4a52;
-  font-style: italic;
+/* 卡片与背景的分界更清楚 */
+.rift {
+  border: 1px solid rgba(180, 210, 240, 0.28);
+  box-shadow: 0 16px 40px rgba(2, 8, 16, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
