@@ -2588,122 +2588,113 @@ a { color: inherit; text-decoration: none; }
 .arcade__stage:fullscreen .game-overlay { background: rgba(6, 18, 26, 0.72); }
 
 .arcade__stage:fullscreen .game-overlay__box { width: min(560px, 82vw); }
+
 /* ============================================================
-   风雨时刻 · 天气记录卡片
+   风雨时刻 · 问题记录（裂缝与修补）
    ============================================================ */
 
-.weather-card {
+.rift {
   position: relative;
-  padding: 20px 22px 18px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.94);
+  padding: 18px 20px 16px 22px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 10px 30px rgba(4, 16, 26, 0.28);
-  margin-bottom: 16px;
-}
-
-.weather-card__head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.weather-card__icon {
-  flex: 0 0 auto;
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  font-size: 24px;
-  border-radius: 14px;
-  background: linear-gradient(150deg, #e8f4ff, #e6f7ee);
-}
-
-.weather-card__meta { flex: 1; min-width: 0; }
-
-.weather-card__date {
-  margin: 0;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  color: var(--ink-dim);
-}
-
-.weather-card__name {
-  margin: 2px 0 0;
-  font-size: 1.02rem;
-  font-weight: 800;
-  color: var(--ink);
-}
-
-.weather-card__hours {
-  flex: 0 0 auto;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: #eef6fb;
-  font-size: 0.74rem;
-  font-weight: 700;
-  color: var(--blue-deep);
-}
-
-.weather-card__meter {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 14px 0 4px;
-}
-
-.weather-card__temp {
-  font-size: 0.8rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-
-.weather-card__temp--hot { color: #e5566f; }
-.weather-card__temp--cool { color: #2f9ff2; }
-
-.weather-card__track {
-  flex: 1;
-  height: 8px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #ffe1e6, #e6f2ff);
+  box-shadow: 0 8px 24px rgba(4, 16, 26, 0.22);
   overflow: hidden;
 }
 
-.weather-card__fill {
-  display: block;
-  height: 100%;
+/* 左边那条"裂缝" */
+.rift::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #ff9aa9 0%, #ffc9d2 45%, #9fd8c4 100%);
+}
+
+.rift__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rift__kind {
+  padding: 3px 12px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #ff8fa3, #ffc3d0);
+  background: #fff1f4;
+  color: #c2557a;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
-.weather-card__lesson {
-  margin: 12px 0 0;
-  font-size: 0.9rem;
-  line-height: 1.8;
-  color: #2c4152;
+.rift__date {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-dim);
 }
 
-.weather-card__tags {
+.rift__level {
+  display: flex;
+  gap: 4px;
+  margin: 10px 0 8px;
+}
+
+.rift__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(120, 140, 150, 0.28);
+}
+
+.rift__dot.is-on { background: #ff8fa3; }
+
+.rift__issue {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.rift__fix {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: #f1faf5;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: #2c5a45;
+}
+
+.rift__fix-icon { flex: 0 0 auto; font-size: 0.9rem; }
+
+.rift__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 14px 0 0;
+  gap: 7px;
+  margin: 12px 0 0;
   padding: 0;
   list-style: none;
 }
 
-.weather-card__tags li {
-  padding: 3px 11px;
+.rift__tags li {
+  padding: 2px 10px;
   border-radius: 999px;
-  background: #f1f7fb;
-  border: 1px solid rgba(47, 159, 242, 0.22);
-  font-size: 0.72rem;
+  background: #f4f8fb;
+  border: 1px solid rgba(47, 159, 242, 0.18);
+  font-size: 0.7rem;
   color: var(--blue-deep);
 }
 
 @media (max-width: 560px) {
-  .weather-card { padding: 16px 16px 14px; }
-  .weather-card__icon { width: 40px; height: 40px; font-size: 20px; }
-  .weather-card__lesson { font-size: 0.86rem; }
+  .rift { padding: 16px 16px 14px 18px; }
+  .rift__issue { font-size: 0.9rem; }
 }
-.weather-card__icon svg { width: 30px; height: 30px; display: block; }

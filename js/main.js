@@ -718,72 +718,62 @@
     }
 
     items.forEach(function (item) {
-      // ---- 天气记录版：只显示天气/时长/温度/一句话 ----
-      if (item && item.weather) {
-        var wCard = el("article", "weather-card reveal");
+      // ---- 问题记录版：只显示类型/程度/问题概括/后来怎么改的 ----
+      if (item && item.kind) {
+        var rCard = el("article", "rift reveal");
 
-        var wHead = el("header", "weather-card__head");
-        var icon = el("span", "weather-card__icon");
-        icon.innerHTML = weatherIconSvg(pick(item.icon, "🌧"));
-        icon.setAttribute("aria-hidden", "true");
-
-        var meta = el("div", "weather-card__meta");
-        var dateEl = el("p", "weather-card__date");
+        var rHead = el("header", "rift__head");
+        var kindEl = el("span", "rift__kind");
+        kindEl.textContent = pick(item.kind, "问题");
+        var dateEl = el("span", "rift__date");
         dateEl.textContent = pick(item.date, "");
-        var nameEl = el("h3", "weather-card__name");
-        nameEl.textContent = pick(item.weather, "阴");
-        meta.appendChild(dateEl);
-        meta.appendChild(nameEl);
+        rHead.appendChild(kindEl);
+        rHead.appendChild(dateEl);
+        rCard.appendChild(rHead);
 
-        var hoursEl = el("span", "weather-card__hours");
-        hoursEl.textContent = pick(item.hours, "");
-
-        wHead.appendChild(icon);
-        wHead.appendChild(meta);
-        wHead.appendChild(hoursEl);
-        wCard.appendChild(wHead);
-
-        // 温度条
-        var from = Number(item.from);
-        var to = Number(item.to);
-        if (!isNaN(from) && !isNaN(to)) {
-          var meter = el("div", "weather-card__meter");
-          var fromEl = el("span", "weather-card__temp weather-card__temp--hot");
-          fromEl.textContent = from + "°";
-          var track = el("div", "weather-card__track");
-          var fill = el("i", "weather-card__fill");
-          fill.style.width = Math.max(4, Math.min(100, from)) + "%";
-          track.appendChild(fill);
-          var toEl = el("span", "weather-card__temp weather-card__temp--cool");
-          toEl.textContent = to + "°";
-          meter.appendChild(fromEl);
-          meter.appendChild(track);
-          meter.appendChild(toEl);
-          wCard.appendChild(meter);
+        // 影响程度：5 个点
+        var level = Number(item.level);
+        if (!isNaN(level) && level > 0) {
+          var dotsEl = el("div", "rift__level");
+          dotsEl.setAttribute("title", "影响程度 " + level + "/5");
+          for (var d = 1; d <= 5; d++) {
+            var dot = el("i", "rift__dot" + (d <= level ? " is-on" : ""));
+            dotsEl.appendChild(dot);
+          }
+          rCard.appendChild(dotsEl);
         }
 
-        var lesson = pick(item.lesson, "");
-        if (lesson) {
-          var lessonEl = el("p", "weather-card__lesson");
-          lessonEl.textContent = lesson;
-          wCard.appendChild(lessonEl);
+        var issueEl = el("p", "rift__issue");
+        issueEl.textContent = pick(item.issue, "");
+        rCard.appendChild(issueEl);
+
+        var fixText = pick(item.fix, "");
+        if (fixText) {
+          var fixEl = el("p", "rift__fix");
+          var fixIcon = el("span", "rift__fix-icon");
+          fixIcon.textContent = "🩹";
+          fixIcon.setAttribute("aria-hidden", "true");
+          var fixBody = el("span", "rift__fix-text");
+          fixBody.textContent = fixText;
+          fixEl.appendChild(fixIcon);
+          fixEl.appendChild(fixBody);
+          rCard.appendChild(fixEl);
         }
 
-        var tags = Array.isArray(item.tags) ? item.tags : [];
-        if (tags.length) {
-          var tagList = el("ul", "weather-card__tags");
-          tags.forEach(function (tag) {
+        var rTags = Array.isArray(item.tags) ? item.tags : [];
+        if (rTags.length) {
+          var tagList = el("ul", "rift__tags");
+          rTags.forEach(function (tag) {
             var li = el("li", "");
             li.textContent = pick(tag, "");
             if (li.textContent) tagList.appendChild(li);
           });
-          wCard.appendChild(tagList);
+          rCard.appendChild(tagList);
         }
 
-        host.appendChild(wCard);
+        host.appendChild(rCard);
         return;
       }
-
       var card = el("article", "storm reveal");
 
       var head = el("header", "storm__head");
