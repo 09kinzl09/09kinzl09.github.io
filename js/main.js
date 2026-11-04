@@ -690,6 +690,20 @@
 
   /* ---------- 风雨时刻 ---------- */
 
+  /* 天气图标（内联 SVG，不依赖 emoji 字体） */
+  var WEATHER_SVG = {
+    drizzle: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 19a5 5 0 0 1 .6-10 7 7 0 0 1 13.2 2.2A4 4 0 0 1 23 19z" fill="#a8cfe8"/><g stroke="#5aa7dd" stroke-width="2" stroke-linecap="round"><path d="M11 22l-1 3M16 22l-1 3M21 22l-1 3"/></g></svg>',
+    storm: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 17a5 5 0 0 1 .6-10 7 7 0 0 1 13.2 2.2A4 4 0 0 1 23 17z" fill="#8fa6c0"/><path d="M17 18l-4 6h4l-2 5 7-8h-4l2-3z" fill="#f5c451"/></svg>',
+    cloudy: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 20a5 5 0 0 1 .6-10 7 7 0 0 1 13.2 2.2A4 4 0 0 1 24 20z" fill="#b9cfe0"/><path d="M7 24h13" stroke="#cfdde9" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    rain: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 18a5 5 0 0 1 .6-10 7 7 0 0 1 13.2 2.2A4 4 0 0 1 23 18z" fill="#7f97ad"/><g stroke="#4b9ad6" stroke-width="2.2" stroke-linecap="round"><path d="M11 21l-1.5 5M16 21l-1.5 5M21 21l-1.5 5"/></g></svg>',
+    sunny: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="20" cy="12" r="6" fill="#ffd166"/><g stroke="#ffd166" stroke-width="2" stroke-linecap="round"><path d="M20 2v3M20 19v3M10 12h3M27 12h3M13 5l2 2M25 17l2 2M13 19l2-2M25 7l2-2"/></g><path d="M8 24a4 4 0 0 1 .5-8 5.6 5.6 0 0 1 10.5 1.8A3.2 3.2 0 0 1 18 24z" fill="#cfe6f5"/></svg>'
+  };
+
+  function weatherIconSvg(emoji) {
+    var map = { "🌦": "drizzle", "⛈": "storm", "☁️": "cloudy", "☁": "cloudy", "🌧": "rain", "🌤": "sunny", "☀️": "sunny" };
+    var kind = map[String(emoji || "").trim()] || "drizzle";
+    return WEATHER_SVG[kind] || WEATHER_SVG.drizzle;
+  }
   function renderStorms() {
     var host = qs("#storm-list");
     if (!host) return;
@@ -704,6 +718,72 @@
     }
 
     items.forEach(function (item) {
+      // ---- 天气记录版：只显示天气/时长/温度/一句话 ----
+      if (item && item.weather) {
+        var wCard = el("article", "weather-card reveal");
+
+        var wHead = el("header", "weather-card__head");
+        var icon = el("span", "weather-card__icon");
+        icon.innerHTML = weatherIconSvg(pick(item.icon, "🌧"));
+        icon.setAttribute("aria-hidden", "true");
+
+        var meta = el("div", "weather-card__meta");
+        var dateEl = el("p", "weather-card__date");
+        dateEl.textContent = pick(item.date, "");
+        var nameEl = el("h3", "weather-card__name");
+        nameEl.textContent = pick(item.weather, "阴");
+        meta.appendChild(dateEl);
+        meta.appendChild(nameEl);
+
+        var hoursEl = el("span", "weather-card__hours");
+        hoursEl.textContent = pick(item.hours, "");
+
+        wHead.appendChild(icon);
+        wHead.appendChild(meta);
+        wHead.appendChild(hoursEl);
+        wCard.appendChild(wHead);
+
+        // 温度条
+        var from = Number(item.from);
+        var to = Number(item.to);
+        if (!isNaN(from) && !isNaN(to)) {
+          var meter = el("div", "weather-card__meter");
+          var fromEl = el("span", "weather-card__temp weather-card__temp--hot");
+          fromEl.textContent = from + "°";
+          var track = el("div", "weather-card__track");
+          var fill = el("i", "weather-card__fill");
+          fill.style.width = Math.max(4, Math.min(100, from)) + "%";
+          track.appendChild(fill);
+          var toEl = el("span", "weather-card__temp weather-card__temp--cool");
+          toEl.textContent = to + "°";
+          meter.appendChild(fromEl);
+          meter.appendChild(track);
+          meter.appendChild(toEl);
+          wCard.appendChild(meter);
+        }
+
+        var lesson = pick(item.lesson, "");
+        if (lesson) {
+          var lessonEl = el("p", "weather-card__lesson");
+          lessonEl.textContent = lesson;
+          wCard.appendChild(lessonEl);
+        }
+
+        var tags = Array.isArray(item.tags) ? item.tags : [];
+        if (tags.length) {
+          var tagList = el("ul", "weather-card__tags");
+          tags.forEach(function (tag) {
+            var li = el("li", "");
+            li.textContent = pick(tag, "");
+            if (li.textContent) tagList.appendChild(li);
+          });
+          wCard.appendChild(tagList);
+        }
+
+        host.appendChild(wCard);
+        return;
+      }
+
       var card = el("article", "storm reveal");
 
       var head = el("header", "storm__head");
