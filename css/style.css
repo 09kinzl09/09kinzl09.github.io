@@ -2750,3 +2750,39 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid rgba(180, 210, 240, 0.28);
   box-shadow: 0 16px 40px rgba(2, 8, 16, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
+/* 折叠的完整记录 */
+.rift__full {
+  margin: 12px 0 0;
+  border-radius: 10px;
+  background: rgba(10, 20, 32, 0.42);
+  border: 1px solid rgba(190, 215, 240, 0.16);
+  padding: 0 12px;
+}
+
+.rift__full summary {
+  cursor: pointer;
+  padding: 10px 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #bcd8f2;
+  list-style: none;
+}
+
+.rift__full summary::-webkit-details-marker { display: none; }
+
+.rift__full summary::before {
+  content: "▸ ";
+  color: #7fd0ab;
+}
+
+.rift__full[open] summary::before { content: "▾ "; }
+
+.rift__full-para {
+  margin: 0 0 10px;
+  font-size: 0.84rem;
+  line-height: 1.85;
+  color: #d8e6f4;
+  text-indent: 2em;
+}
+
+.rift__full[open] { padding-bottom: 6px; }

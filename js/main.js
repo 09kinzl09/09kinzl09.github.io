@@ -735,10 +735,7 @@
         var rHead = el("header", "rift__head");
         var kindEl = el("span", "rift__kind");
         kindEl.textContent = pick(item.kind, "问题");
-        var dateEl = el("span", "rift__date");
-        dateEl.textContent = pick(item.date, "");
         rHead.appendChild(kindEl);
-        rHead.appendChild(dateEl);
         overlay.appendChild(rHead);
 
         var level = Number(item.level);
@@ -769,6 +766,22 @@
             quoteBox.appendChild(q);
           });
           overlay.appendChild(quoteBox);
+        }
+
+        // 完整记录（可折叠）
+        var full = Array.isArray(item.fulltext) ? item.fulltext : [];
+        if (full.length) {
+          var details = document.createElement("details");
+          details.className = "rift__full";
+          var summary = document.createElement("summary");
+          summary.textContent = "展开完整记录（" + full.length + " 段）";
+          details.appendChild(summary);
+          full.forEach(function (para) {
+            var p = el("p", "rift__full-para");
+            p.textContent = pick(para, "");
+            if (p.textContent) details.appendChild(p);
+          });
+          overlay.appendChild(details);
         }
 
         var fixText = pick(item.fix, "");
