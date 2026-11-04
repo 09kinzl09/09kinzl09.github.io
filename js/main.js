@@ -747,6 +747,23 @@
         issueEl.textContent = pick(item.issue, "");
         rCard.appendChild(issueEl);
 
+        // 节选（不是全文，只是那一两句）
+        var excerpts = Array.isArray(item.excerpts) ? item.excerpts : [];
+        if (excerpts.length) {
+          var quoteBox = el("div", "rift__quotes");
+          var quoteLabel = el("span", "rift__quotes-label");
+          quoteLabel.textContent = "节选";
+          quoteBox.appendChild(quoteLabel);
+          excerpts.forEach(function (line) {
+            var text = pick(line, "");
+            if (!text) return;
+            var p = el("p", "rift__quote");
+            p.textContent = "「" + text + "」";
+            quoteBox.appendChild(p);
+          });
+          rCard.appendChild(quoteBox);
+        }
+
         var fixText = pick(item.fix, "");
         if (fixText) {
           var fixEl = el("p", "rift__fix");
