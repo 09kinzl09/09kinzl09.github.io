@@ -704,11 +704,169 @@
     var kind = map[String(emoji || "").trim()] || "drizzle";
     return WEATHER_SVG[kind] || WEATHER_SVG.drizzle;
   }
+  /* ---------- 风雨时刻：原文解密（口令解锁） ---------- */
+
+  var riftUnlocked = false;
+  var riftPasswordValue = "";
+
+  function riftUtf8(str) {
+    if (window.TextEncoder) return new TextEncoder().encode(str);
+    var out = [];
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charCodeAt(i);
+      if (c < 0x80) out.push(c);
+      else if (c < 0x800) out.push(0xc0 | (c >> 6), 0x80 | (c & 63));
+      else out.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+    }
+    return new Uint8Array(out);
+  }
+
+  function riftFnv(bytes) {
+    var h = 2166136261;
+    for (var i = 0; i < bytes.length; i++) {
+      h ^= bytes[i];
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h >>> 0;
+  }
+
+  function riftMulberry32(a) {
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), 1 | t) >>> 0;
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function riftDecrypt(b64, password) {
+    try {
+      var bin = atob(b64);
+      var rnd = riftMulberry32(riftFnv(riftUtf8(password)));
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) {
+        bytes[i] = bin.charCodeAt(i) ^ (Math.floor(rnd() * 256) & 0xFF);
+      }
+      if (window.TextDecoder) return new TextDecoder("utf-8").decode(bytes);
+      var s = "";
+      for (var j = 0; j < bytes.length; j++) s += String.fromCharCode(bytes[j]);
+      return decodeURIComponent(escape(s));
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function riftCountLocked() {
+    var items = Array.isArray(cfg.storms) ? cfg.storms : [];
+    for (var i = 0; i < items.length; i++) {
+      if (items[i] && Array.isArray(items[i].locked) && items[i].locked.length) {
+        return items[i].locked.length;
+      }
+    }
+    return 0;
+  }
+
+  function riftLooksValid(text) {
+    if (!text || text.indexOf("\uFFFD") >= 0) return false;
+    return /^[\u4e00-\u9fa5“「]/.test(text.trim());
+  }
+
+  function riftBuildLockBar(host) {
+    var locked = riftCountLocked();
+    if (!locked) return;
+
+    var bar = el("div", "rift-lock" + (riftUnlocked ? " is-open" : ""));
+
+    var icon = el("span", "rift-lock__icon");
+    icon.textContent = riftUnlocked ? "🔓" : "🔒";
+
+    var text = el("div", "rift-lock__text");
+    var title = el("p", "rift-lock__title");
+    title.textContent = riftUnlocked ? "原文已解锁（仅本次打开有效）" : "完整原文已加密";
+    var sub = el("p", "rift-lock__sub");
+    sub.textContent = riftUnlocked
+      ? "刷新页面后需要重新输入口令。"
+      : "节选可以直接看；展开完整记录需要输入口令。";
+    text.appendChild(title);
+    text.appendChild(sub);
+
+    bar.appendChild(icon);
+    bar.appendChild(text);
+
+    if (!riftUnlocked) {
+      var form = el("form", "rift-lock__form");
+      var input = document.createElement("input");
+      input.type = "password";
+      input.className = "rift-lock__input";
+      input.placeholder = "输入口令";
+      input.autocomplete = "off";
+
+      var btn = document.createElement("button");
+      btn.type = "submit";
+      btn.className = "rift-lock__btn";
+      btn.textContent = "解锁";
+
+      var msg = el("span", "rift-lock__msg");
+
+      form.appendChild(input);
+      form.appendChild(btn);
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var value = input.value.trim();
+        if (!value) return;
+
+        var probe = null;
+        var items = cfg.storms || [];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i] && Array.isArray(items[i].locked) && items[i].locked.length) {
+            probe = items[i].locked[0];
+            break;
+          }
+        }
+        if (!probe) return;
+
+        if (riftLooksValid(riftDecrypt(probe, value))) {
+          riftUnlocked = true;
+          riftPasswordValue = value;
+          var list = qs("#storm-list");
+          if (list) {
+            list.innerHTML = "";
+            renderStorms();
+            // 重新渲染的卡片要重新接管入场动画，否则会一直透明
+            initReveal();
+            // 解锁后生成的卡片直接显示，不再等滚动触发
+            var fresh = list.querySelectorAll(".reveal");
+            for (var k = 0; k < fresh.length; k++) {
+              fresh[k].classList.add("is-in");
+            }
+          }
+        } else {
+          msg.textContent = "口令不对";
+          msg.classList.add("is-error");
+          input.value = "";
+          input.focus();
+        }
+      });
+
+      bar.appendChild(form);
+      bar.appendChild(msg);
+    }
+
+    host.appendChild(bar);
+  }
   function renderStorms() {
     var host = qs("#storm-list");
     if (!host) return;
 
+    // 重渲染前清掉旧场景，避免叠加
+    if (riftRaf) { cancelAnimationFrame(riftRaf); riftRaf = null; }
+    riftScenes.length = 0;
+    riftVisible.clear();
+
     var items = Array.isArray(cfg.storms) ? cfg.storms : [];
+
+    riftBuildLockBar(host);
 
     if (!items.length) {
       var empty = el("p", "storm__empty");
@@ -720,7 +878,7 @@
     items.forEach(function (item) {
       // ---- 问题记录：每个问题一个 canvas 小场景（乌云/雨/闪电） ----
       if (item && item.kind) {
-        var rCard = el("article", "rift reveal");
+        var rCard = el("article", "rift");
 
         var sceneCanvas = document.createElement("canvas");
         sceneCanvas.className = "rift__canvas";
@@ -768,8 +926,21 @@
           overlay.appendChild(quoteBox);
         }
 
-        // 完整记录（可折叠）
+        // 完整记录（可折叠）；密文需要口令
         var full = Array.isArray(item.fulltext) ? item.fulltext : [];
+        var lockedList = Array.isArray(item.locked) ? item.locked : [];
+        if (riftUnlocked && lockedList.length && !full.length) {
+          full = lockedList.map(function (c) {
+            return riftDecrypt(c, riftPasswordValue);
+          }).filter(function (x) { return riftLooksValid(x); });
+        }
+
+        if (!full.length && lockedList.length) {
+          var lockHint = el("p", "rift__locked");
+          lockHint.textContent = "▫ 原始记录已加密（" + lockedList.length + " 段）· 输入上方口令查看";
+          overlay.appendChild(lockHint);
+        }
+
         if (full.length) {
           var details = document.createElement("details");
           details.className = "rift__full";
